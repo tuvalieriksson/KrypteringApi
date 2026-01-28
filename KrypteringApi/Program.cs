@@ -1,23 +1,34 @@
+using KrypteringApi; 
+
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+// Registrerar CipherService så den kan användas i endpoints
+builder.Services.AddSingleton<CipherService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+// ENDPOINT: Kryptera
+app.MapGet("/encrypt", (string text, int shift, CipherService cipher) =>
+{
+    var result = cipher.Encrypt(text, shift);
+    return Results.Ok(new { mode = "encrypt", original = text, result = result });
+});
 
-app.MapControllers();
+// ENDPOINT: Avkryptera
+app.MapGet("/decrypt", (string text, int shift, CipherService cipher) =>
+{
+    var result = cipher.Decrypt(text, shift);
+    return Results.Ok(new { mode = "decrypt", original = text, result = result });
+});
 
 app.Run();
