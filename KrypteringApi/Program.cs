@@ -1,4 +1,4 @@
-using KrypteringApi; 
+using KrypteringApi;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
@@ -9,12 +9,9 @@ builder.Services.AddSingleton<CipherService>();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
+// Swagger aktiveras oavsett miljö 
+app.UseSwagger();
+app.UseSwaggerUI();
 app.UseHttpsRedirection();
 
 // ENDPOINT: Kryptera
