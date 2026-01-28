@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ "main" ] 
+    branches: [ "main" ]
   pull_request:
-    branches: [ "dev", "main" ] 
+    branches: [ "dev", "main" ]
 
 jobs:
   build-and-test:
@@ -15,7 +15,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '10.0.x' 
+        dotnet-version: '10.0.x'
 
     - name: Restore dependencies
       run: dotnet restore
@@ -26,18 +26,18 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal
 
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build-and-test
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    
-    steps:
-    - uses: actions/checkout@v4
+    # NYTT STEG: Kompilera appen för Linux
+    - name: Publish
+      run: dotnet publish KrypteringApi/KrypteringApi.csproj -c Release -o out
 
+    # NYTT STEG: Packa bara ner de färdiga filerna (binärerna)
     - name: Generate Deployment Package
-      run: zip -r deploy.zip . -x "*.git*"
+      run: |
+        cd out
+        zip -r ../deploy.zip .
 
     - name: Deploy to AWS Elastic Beanstalk
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       uses: einaregilsson/beanstalk-deploy@v22
       with:
         aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
