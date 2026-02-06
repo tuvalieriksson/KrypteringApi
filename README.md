@@ -3,6 +3,7 @@
 # Live Demo
 Applikationen körs live på AWS Elastic Beanstalk: 
 [KrypteringApi Swagger UI](http://kryptering-api-tuvali.eu-north-1.elasticbeanstalk.com/swagger)
+[AWS environment](https://eu-north-1.console.aws.amazon.com/elasticbeanstalk/home?region=eu-north-1#/environment/dashboard?environmentId=e-rv3rx7nhdh)
 
 # Teknikstack
 Backend: .NET 10 (C#)
